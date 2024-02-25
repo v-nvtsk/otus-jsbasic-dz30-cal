@@ -1,0 +1,11 @@
+.filter__fieldset {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter__group {
+  display: flex;
+  flex-direction: column;
+  place-content: end;
+}
