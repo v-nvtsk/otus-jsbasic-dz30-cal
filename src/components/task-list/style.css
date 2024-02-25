@@ -1,0 +1,29 @@
+/* reset styling */
+
+.task-list {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0px;
+  list-style-type: none;
+}
+
+input,
+button {
+  outline: none;
+}
+
+.empty-list {
+  margin: 0 auto;
+  font-size: 30px;
+  text-align: center;
+}
+
+.task-list:has(.list__item) .empty-list {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .empty-list {
+    font-size: 16px;
+  }
+}
