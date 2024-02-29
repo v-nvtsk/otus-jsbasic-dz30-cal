@@ -1,0 +1,44 @@
+import { describe, expect, it, jest } from "@jest/globals";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { Firebase } from "./firebase";
+import { TodoItem } from "./calendar-api";
+
+jest.mock("firebase/firestore", () => ({
+  // ... other firestore exports
+  addDoc: jest.fn(),
+  collection: jest.fn(),
+}));
+
+describe("firebase", () => {
+  const fireStore = new Firebase("firebase-test");
+  const testTodoItem: TodoItem = {
+    taskText: "test",
+    status: false,
+    tags: "tag1, tag2",
+    creationDateUTC: new Date().toISOString(),
+    dueDateUTC: new Date().toISOString(),
+    id: "",
+  };
+
+  (addDoc as jest.Mock).mockImplementation(() =>
+    Promise.resolve({
+      id: "some-fake-document-id",
+      // ... other properties that a DocumentReference might have
+    }),
+  );
+  (collection as jest.Mock).mockImplementation(jest.fn());
+
+  it("should be an instance of Firebase", () => {
+    expect(fireStore).toBeInstanceOf(Firebase);
+    expect(fireStore.create).toBeInstanceOf(Function);
+    expect(fireStore.read).toBeInstanceOf(Function);
+    expect(fireStore.update).toBeInstanceOf(Function);
+    expect(fireStore.delete).toBeInstanceOf(Function);
+  });
+
+  it("should add new item to DB", async () => {
+    await fireStore.create(testTodoItem);
+    expect(collection).toHaveBeenCalled();
+    expect(addDoc).toHaveBeenCalled();
+  });
+});

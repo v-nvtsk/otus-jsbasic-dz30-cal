@@ -1,0 +1,109 @@
+.list__item {
+  display: grid;
+  grid-template-columns: 80px 1fr 50px;
+  grid-template-areas:
+    "checkbox title btn"
+    "checkbox dates btn"
+    "checkbox tags tags";
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.list__item:last-of-type {
+  border-bottom: none;
+}
+
+.list__item.edit-mode .item__title {
+  display: none;
+}
+
+.list__item:has(.item__input-checkbox:checked) .item__title {
+  text-decoration: line-through;
+}
+
+.list__item:hover {
+  background-color: #f5f5f5;
+}
+
+.item__checkbox {
+  grid-area: checkbox;
+  place-self: center;
+}
+
+.item__input-checkbox {
+  transform: scale(2);
+}
+
+.input__wrapper {
+  grid-area: title;
+  font-size: 24px;
+  padding: 5px;
+}
+
+.item__dates {
+  margin-top: 5px;
+  grid-area: dates;
+  font-size: 10px;
+  display: flex;
+  gap: 20px;
+}
+
+.item__btn {
+  grid-area: btn;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* align-items: center; */
+  /* align-content: center; */
+}
+
+.item__task-tags {
+  margin-top: 5px;
+  grid-area: tags;
+  display: flex;
+  gap: 20px;
+}
+
+.item__task-tags > *::before {
+  content: "🏷️";
+}
+
+.list__item .item__input-text {
+  display: none;
+}
+
+.list__item.edit-mode .item__input-text {
+  display: inline-block;
+  width: 90%;
+}
+
+@media screen and (max-width: 768px) {
+  .list__item {
+    grid-template-columns: auto 1fr auto;
+    padding: 5px;
+  }
+
+  .item__input-checkbox {
+    transform: scale(1);
+  }
+
+  .input__wrapper {
+    font-size: 16px;
+  }
+
+  .item__dates {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .item__task-tags,
+  .item__task-tags > *::before {
+    font-size: 10px;
+  }
+
+  .item__btn .btn {
+    font-size: 10px;
+    padding: 2px;
+    bottom: 1px;
+  }
+}
