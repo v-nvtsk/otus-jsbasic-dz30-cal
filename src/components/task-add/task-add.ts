@@ -6,36 +6,38 @@ export function taskAdd(
 ): HTMLElement {
   const taskAddForm = document.createElement("form");
   taskAddForm.className = "task-add";
+  taskAddForm.id = "task-add-form";
 
   taskAddForm.innerHTML = ` \
   <fieldset class="task-add__fieldset">
     <legend>Add task</legend>
     <div class="task-add__group">
       <label class="task-add__label">Task:</label>
-      <input type="text" class="task-add__input-text" placeholder="Enter task..." required>
+      <input type="text" name="taskText" class="task-add__input-text" placeholder="Enter task..." required>
     </div>
     <div class="task-add__group">
       <label class="task-add__label">Due date:</label>
-      <input type="date" class="task-add__input-date" required>
+      <input type="date" name="taskDate" class="task-add__input-date" required>
     </div>
     <div class="task-add__group">
       <label class="task-add__label">Tags:</label>
-      <input type="text" class="task-add__input-tags" placeholder="Enter comma separated tags">
+      <input type="text" name="taskTags" class="task-add__input-tags" placeholder="Enter comma separated tags">
     </div>
     <div class="task-add__group">
-      <button class="task-add__btn-add">Add</button>
+      <button type="submit" class="task-add__btn-add">Add</button>
     </div>
   </fieldset>
   `;
   parent.append(taskAddForm);
 
-  taskAddForm.querySelector(".task-add__btn-add")?.addEventListener("click", (ev: Event) => {
+  taskAddForm.addEventListener("submit", (ev: Event) => {
     ev.preventDefault();
     if (taskAddForm.checkValidity()) {
-      const taskText = (taskAddForm.querySelector(".task-add__input-text") as HTMLInputElement)!.value;
-      const taskDate = (taskAddForm.querySelector(".task-add__input-date") as HTMLInputElement)!.value;
-      const taskTags = (taskAddForm.querySelector(".task-add__input-tags") as HTMLInputElement)!.value;
+      const taskText = (taskAddForm.elements.namedItem("taskText") as HTMLInputElement).value;
+      const taskDate = (taskAddForm.elements.namedItem("taskDate") as HTMLInputElement).value;
+      const taskTags = (taskAddForm.elements.namedItem("taskTags") as HTMLInputElement).value;
       onAddTask(taskText, taskDate, taskTags);
+      taskAddForm.reset();
     }
   });
 

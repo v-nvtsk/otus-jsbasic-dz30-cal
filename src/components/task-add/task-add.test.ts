@@ -46,7 +46,8 @@ describe("taskAdd", () => {
     taskTextEl.value = "test task";
     taskDateEl.value = "2022-01-01";
     taskTagsEl.value = "tag1, tag2";
-    taskBtnEl.click();
+    const form = parent.querySelector(".task-add")! as HTMLFormElement;
+    form.submit();
     expect(onAddTask).toHaveBeenCalledWith("test task", "2022-01-01", "tag1, tag2");
   });
 });

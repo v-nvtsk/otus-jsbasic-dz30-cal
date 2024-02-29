@@ -10,8 +10,8 @@ const sleep = async (x: number = 0) =>
 describe("Calendar", () => {
   const root = document.createElement("div");
   let calendar: Calendar;
-  let taskAddForm: HTMLElement;
-  let filterForm: HTMLElement;
+  let taskAddForm: HTMLFormElement;
+  let filterForm: HTMLFormElement;
   let taskListEl: HTMLElement;
 
   let lsCreate = jest.spyOn(LocalStore.prototype, "create");
@@ -24,7 +24,7 @@ describe("Calendar", () => {
     calendar = new Calendar(root)!;
     calendar.init();
     await sleep();
-    taskAddForm = root.querySelector(".task-add")!;
+    taskAddForm = root.querySelector(".task-add")! as HTMLFormElement;
     filterForm = root.querySelector(".filter-controls")!;
     taskListEl = root.querySelector(".task-list")!;
 
@@ -54,7 +54,7 @@ describe("Calendar", () => {
     (taskAddForm.querySelector(".task-add__input-date") as HTMLInputElement).value = "2022-01-01";
     (taskAddForm.querySelector(".task-add__input-tags") as HTMLInputElement).value = "tag1, tag2";
 
-    (taskAddForm.querySelector(".task-add__btn-add") as HTMLButtonElement).click();
+    taskAddForm.submit();
     await sleep();
     expect(localStorage.length).toBe(1);
   });
@@ -67,22 +67,21 @@ describe("Calendar", () => {
     (taskAddForm.querySelector(".task-add__input-date") as HTMLInputElement).value = "2022-01-01";
     (taskAddForm.querySelector(".task-add__input-tags") as HTMLInputElement).value = "tag1, tag2";
 
-    (taskAddForm.querySelector(".task-add__btn-add") as HTMLButtonElement).click();
+    taskAddForm.submit();
     await sleep();
     expect(lsCreate).toHaveBeenCalled();
 
     const filterTagsInput = filterForm.querySelector(".filter__tags") as HTMLInputElement;
-    const filterBtn = filterForm.querySelector(".filter__btn-filter") as HTMLButtonElement;
 
     filterTagsInput.value = "tag1";
-    filterBtn.click();
+    filterForm.submit();
     await sleep();
     expect(lsRead).toHaveBeenLastCalledWith({
       taskTags: "tag1",
     });
 
     filterTagsInput.value = "";
-    filterBtn.click();
+    filterForm.submit();
     await sleep();
     expect(lsRead).toHaveBeenLastCalledWith({});
   });
@@ -95,7 +94,7 @@ describe("Calendar", () => {
     (taskAddForm.querySelector(".task-add__input-date") as HTMLInputElement).value = "2022-01-01";
     (taskAddForm.querySelector(".task-add__input-tags") as HTMLInputElement).value = "tag1, tag2";
 
-    (taskAddForm.querySelector(".task-add__btn-add") as HTMLButtonElement).click();
+    taskAddForm.submit();
     await sleep();
     expect(lsCreate).toHaveBeenCalled();
 
@@ -113,7 +112,7 @@ describe("Calendar", () => {
     (taskAddForm.querySelector(".task-add__input-date") as HTMLInputElement).value = "2022-01-01";
     (taskAddForm.querySelector(".task-add__input-tags") as HTMLInputElement).value = "tag1, tag2";
 
-    (taskAddForm.querySelector(".task-add__btn-add") as HTMLButtonElement).click();
+    taskAddForm.submit();
     await sleep();
     expect(lsCreate).toHaveBeenCalled();
     const checkBox = taskListEl.querySelector(".item__input-checkbox") as HTMLInputElement;

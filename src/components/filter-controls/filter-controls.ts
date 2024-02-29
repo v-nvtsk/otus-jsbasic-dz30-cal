@@ -12,28 +12,29 @@ export function renderFilterControls(
 ): HTMLElement {
   const filterControls = document.createElement("form");
   filterControls.className = "filter-controls filter";
+  filterControls.id = "filter-controls";
 
   filterControls.innerHTML = ` \
     <fieldset class="filter__fieldset">
       <legend>Filter</legend>
       <div class="filter__group">
         <label class="filter__label">From date:</label>
-        <input class="filter__date-from" type="date">
+        <input class="filter__date-from" name="filterDateFrom" type="date">
       </div>
 
       <div class="filter__group">
       <label class="filter__label">To date:</label>
-      <input class="filter__date-to" type="date">
+      <input class="filter__date-to" name="filterDateTo" type="date">
     </div>
 
       <div class="filter__group">
         <label class="filter__label">By text content:</label>
-        <input class="filter__text" type="text" placeholder="Search">
+        <input class="filter__text" name="filterText" type="text" placeholder="Search">
       </div>
 
       <div class="filter__group">
         <label class="filter__label">By status:</label>
-        <select class="filter__status">
+        <select class="filter__status" name="filterStatus">
           <option value="">All</option>
           <option value="0">Todo</option>
           <option value="1">Done</option>
@@ -42,30 +43,30 @@ export function renderFilterControls(
 
       <div class="filter__group">
         <label class="filter__label">By tag:</label>
-        <input class="filter__tags"  type="text" placeholder="Tags">
+        <input class="filter__tags" name="filterTags" type="text" placeholder="Tags">
       </div>
 
       <div class="filter__group">
-        <button class="filter__btn-filter" type="submit">Filter</button>
+        <button type="submit" class="filter__btn-filter">Filter</button>
+        <button class="filter__btn-clear" ">Filter</button>
       </div>
     </fieldset>
   `;
 
   parent.append(filterControls);
 
-  filterControls.querySelector(".filter__btn-filter")?.addEventListener("click", (ev: Event) => {
+  filterControls.addEventListener("submit", (ev: Event) => {
     ev.preventDefault();
-    const taskText = (filterControls.querySelector(".filter__text") as HTMLInputElement)!.value;
-    const taskDateFrom = (filterControls.querySelector(".filter__date-from") as HTMLInputElement)!.value;
-    let taskDateTo = (filterControls.querySelector(".filter__date-to") as HTMLInputElement)!.value;
-    const taskStatus = (filterControls.querySelector(".filter__status") as HTMLInputElement)!.value;
+    const taskText = (filterControls.elements.namedItem("filterText") as HTMLInputElement).value;
+    const taskDateFrom = (filterControls.elements.namedItem("filterDateFrom") as HTMLInputElement).value;
+    let taskDateTo = (filterControls.elements.namedItem("filterDateTo") as HTMLInputElement).value;
+    const taskStatus = (filterControls.elements.namedItem("filterStatus") as HTMLInputElement).value;
 
     if (new Date(taskDateFrom) > new Date(taskDateTo)) {
       taskDateTo = taskDateFrom;
       (filterControls.querySelector(".filter__date-to") as HTMLInputElement).value = taskDateTo;
     }
-
-    const taskTags = (filterControls.querySelector(".filter__tags") as HTMLInputElement)!.value;
+    const taskTags = (filterControls.elements.namedItem("filterTags") as HTMLInputElement).value;
     onFilter({ taskText, taskDateFrom, taskDateTo, taskStatus, taskTags });
   });
 

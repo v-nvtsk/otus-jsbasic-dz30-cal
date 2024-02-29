@@ -7,6 +7,7 @@ describe("FilterControls", () => {
   });
 
   let parent: HTMLElement;
+  let filterForm: HTMLFormElement;
   let filterDateFrom: HTMLInputElement;
   let filterDateTo: HTMLInputElement;
   let filterText: HTMLInputElement;
@@ -20,6 +21,7 @@ describe("FilterControls", () => {
     parent.innerHTML = "";
     renderFilterControls(parent, onFilter);
 
+    filterForm = parent.querySelector(".filter-controls")!;
     filterDateFrom = parent.querySelector(".filter__date-from")!;
     filterDateTo = parent.querySelector(".filter__date-to")!;
     filterText = parent.querySelector(".filter__text")!;
@@ -41,7 +43,7 @@ describe("FilterControls", () => {
 
   it("should call onFilter function on filter button click", () => {
     filterDateFrom.value = "2024-01-01";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(1);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "",
@@ -52,7 +54,7 @@ describe("FilterControls", () => {
     });
 
     filterDateTo.value = "2024-01-02";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(2);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "",
@@ -63,7 +65,7 @@ describe("FilterControls", () => {
     });
 
     filterText.value = "test";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(3);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "test",
@@ -74,7 +76,7 @@ describe("FilterControls", () => {
     });
 
     filterStatus.value = "1";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(4);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "test",
@@ -85,7 +87,7 @@ describe("FilterControls", () => {
     });
 
     filterTags.value = "tag1";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(5);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "test",
@@ -97,7 +99,7 @@ describe("FilterControls", () => {
 
     filterDateFrom.value = "2024-02-01";
     filterDateTo.value = "2024-01-02";
-    filterBtn.click();
+    filterForm.submit();
     expect(onFilter).toHaveBeenCalledTimes(6);
     expect(onFilter).toHaveBeenLastCalledWith({
       taskText: "test",
