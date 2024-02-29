@@ -26,8 +26,7 @@ export class Calendar {
     private readonly root: HTMLElement,
     private readonly store: CalendarAPI = new LocalStore(),
   ) {
-    const calendar = createElementFromHTML(`<div class="calendar"></div>`)[0] as HTMLElement;
-    this.calendar = calendar;
+    this.calendar = createElementFromHTML(`<div class="calendar"></div>`)[0] as HTMLElement;
     this.activeDate = new Date();
     this.taskList = new TaskList({
       parent: this.calendar,
