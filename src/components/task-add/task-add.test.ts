@@ -8,6 +8,7 @@ describe("taskAdd", () => {
 
   let onAddTask = jest.fn();
   let parent: HTMLElement;
+  let form: HTMLFormElement;
   let taskTextEl: HTMLInputElement;
   let taskDateEl: HTMLInputElement;
   let taskTagsEl: HTMLInputElement;
@@ -18,6 +19,7 @@ describe("taskAdd", () => {
     parent = document.createElement("div");
     taskAdd(parent, onAddTask);
 
+    form = parent.querySelector(".task-add")! as HTMLFormElement;
     taskTextEl = parent.querySelector(".task-add__input-text")!;
     taskDateEl = parent.querySelector(".task-add__input-date")!;
     taskTagsEl = parent.querySelector(".task-add__input-tags")!;
@@ -38,7 +40,7 @@ describe("taskAdd", () => {
   });
 
   it("should not add task if form is invalid", () => {
-    taskBtnEl.click();
+    form.submit();
     expect(onAddTask).not.toHaveBeenCalled();
   });
 
@@ -46,7 +48,6 @@ describe("taskAdd", () => {
     taskTextEl.value = "test task";
     taskDateEl.value = "2022-01-01";
     taskTagsEl.value = "tag1, tag2";
-    const form = parent.querySelector(".task-add")! as HTMLFormElement;
     form.submit();
     expect(onAddTask).toHaveBeenCalledWith("test task", "2022-01-01", "tag1, tag2");
   });
