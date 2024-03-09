@@ -9,3 +9,11 @@
   flex-direction: column;
   place-content: end;
 }
+
+.filter__group-btn {
+  flex-grow: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 60px);
+  gap: 10px;
+  align-items: end;
+}
