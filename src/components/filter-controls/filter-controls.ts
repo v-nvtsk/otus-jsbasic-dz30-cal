@@ -48,7 +48,7 @@ export function renderFilterControls(
 
       <div class="filter__group filter__group-btn">
         <button type="submit" class="filter__btn-filter">Filter</button>
-        <input type="button" class="filter__btn-clear" value="Clear"/>
+        <input type="button" class="filter__btn-clear" value="Clear">
       </div>
     </fieldset>
   `;
