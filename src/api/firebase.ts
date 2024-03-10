@@ -65,7 +65,6 @@ export class Firebase implements CalendarAPI {
     );
     const allItems = await response.json();
 
-    // if (allItems !== null) {
     const filteredItems = Object.entries(allItems);
     return filteredItems
       .reduce((acc: TodoItem[], [_uid, value]) => {
@@ -86,8 +85,6 @@ export class Firebase implements CalendarAPI {
         if (el1.creationDateUTC > el2.creationDateUTC) return 1;
         return 0;
       });
-    // }
-    // return [];
   }
 
   async update(item: UpdateTodoItem): Promise<TodoItem | undefined> {
