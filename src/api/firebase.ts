@@ -1,105 +1,123 @@
-// Import the functions you need from the SDKs you need
-import { FirebaseApp, initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc, addDoc, Firestore } from "firebase/firestore";
 import { type Filter, type CalendarAPI, type TodoItem, APP_PREFIX, USER_PREFIX, UpdateTodoItem } from "./calendar-api";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-export const firebaseConfig = {
-  apiKey: "AIzaSyBTsQ82-UIICuUNrkAV9uuhiQjOpyK1iOI",
-  authDomain: "nv-otus.firebaseapp.com",
-  projectId: "nv-otus",
-  storageBucket: "nv-otus.appspot.com",
-  messagingSenderId: "536193599681",
-  appId: "1:536193599681:web:3404e99943955059312c40",
-};
-
-// Initialize Firebase
+export const API_KEY = "AIzaSyBTsQ82-UIICuUNrkAV9uuhiQjOpyK1iOI";
+export const DB_NAME = "nv-otus-default-rtdb";
 
 export class Firebase implements CalendarAPI {
-  private app: FirebaseApp;
+  private appPrefix: string = APP_PREFIX;
 
-  private db!: Firestore;
+  private user: { [name: string]: string } = {};
 
-  private readonly namespace: string = `${APP_PREFIX}@${USER_PREFIX}#`;
+  constructor(private userPrefix: string = USER_PREFIX) {
+    this.authenticate();
+  }
 
-  constructor(userPrefix?: string) {
-    this.namespace = userPrefix !== undefined ? `${APP_PREFIX}@${userPrefix}#` : this.namespace;
-    this.app = initializeApp(firebaseConfig);
+  async authenticate(): Promise<void> {
+    const raw = JSON.stringify({
+      email: this.userPrefix,
+      password: "123456",
+      returnSecureToken: true,
+    });
 
-    if (this.app) this.db = getFirestore(this.app);
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: raw,
+    };
+
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+      requestOptions,
+    );
+    const user = await response.json();
+
+    this.user = user;
   }
 
   async create(data: TodoItem): Promise<string | undefined> {
-    try {
-      const response = await addDoc(collection(this.db, this.namespace), data);
-      return response.id;
-    } catch (e: any) {
-      if (e instanceof Error) throw new Error(`firebase read error: ${e.message}`);
-    }
-    return undefined;
+    await this.authenticate();
+    const raw = JSON.stringify(data);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: raw,
+    };
+
+    const response = await fetch(
+      `https://${DB_NAME}.firebaseio.com/${this.appPrefix}/${this.user.localId}.json?auth=${this.user.idToken}`,
+      requestOptions,
+    );
+    const result = await response.json();
+    return result.name;
   }
 
   async read(filter: Partial<Filter>): Promise<any[]> {
-    const allItems = await this.findAllRecords();
-    const filteredItems = allItems
-      .filter((el) => {
+    await this.authenticate();
+
+    const requestOptions = {
+      method: "GET",
+    };
+
+    const response = await fetch(
+      `https://${DB_NAME}.firebaseio.com/${this.appPrefix}/${this.user.localId}.json?auth=${this.user.idToken}`,
+      requestOptions,
+    );
+    const allItems = await response.json();
+
+    // if (allItems !== null) {
+    const filteredItems = Object.entries(allItems);
+    return filteredItems
+      .reduce((acc: TodoItem[], [_uid, value]) => {
+        const el = value as TodoItem;
+        el.id = _uid;
         let result = true;
         if (filter.taskText !== undefined && !el.taskText.includes(filter.taskText)) result = false;
         if (filter.status !== undefined && filter.status !== el.status) result = false;
-
         const dueDateUTC = new Date(el.dueDateUTC);
         if (filter.dateFrom !== undefined && dueDateUTC < filter.dateFrom) result = false;
         if (filter.dateTo !== undefined && dueDateUTC > filter.dateTo) result = false;
         if (filter.taskTags !== undefined && !el.tags.includes(filter.taskTags)) result = false;
-        return result;
-      })
-      .sort((el1, el2) => {
+        if (result) acc.push(el);
+        return acc;
+      }, [])
+      .sort((el1: TodoItem, el2: TodoItem) => {
         if (el1.creationDateUTC < el2.creationDateUTC) return -1;
         if (el1.creationDateUTC > el2.creationDateUTC) return 1;
         return 0;
       });
-    return filteredItems;
+    // }
+    // return [];
   }
 
   async update(item: UpdateTodoItem): Promise<TodoItem | undefined> {
     if (item.id === undefined) return undefined;
-    const docRef = doc(this.db, this.namespace, item.id);
+    await this.authenticate();
 
-    const dbItem: Partial<TodoItem> = {};
-    dbItem.id = item.id;
-    if (item.taskText && item.taskText !== "") dbItem.taskText = item.taskText;
-    if (item.status !== undefined) dbItem.status = item.status;
+    const requestOptions = {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    };
 
-    await updateDoc(docRef, dbItem);
-    const resultItems: TodoItem[] = await this.read({});
-    if (!resultItems) return undefined;
-    const result = resultItems.find((el: TodoItem) => el.id === item.id);
+    const response = await fetch(
+      `https://${DB_NAME}.firebaseio.com/${this.appPrefix}/${this.user.localId}/${item.id}.json?auth=${this.user.idToken}`,
+      requestOptions,
+    );
+    const result = await response.json();
     return result as TodoItem;
   }
 
   async delete(id: string): Promise<void> {
-    await deleteDoc(doc(this.db, this.namespace, id));
-  }
+    await this.authenticate();
 
-  private async findAllRecords(): Promise<TodoItem[]> {
-    try {
-      const response = await getDocs(collection(this.db, this.namespace));
-      const newData = response.docs.map((newDoc) => ({
-        id: newDoc.id,
-        taskText: newDoc.data().taskText,
-        status: newDoc.data().status,
-        tags: newDoc.data().tags,
-        creationDateUTC: newDoc.data().creationDateUTC,
-        dueDateUTC: newDoc.data().dueDateUTC,
-      }));
-      return newData;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("firebase read error: ", e);
-      return [];
-    }
+    const requestOptions = {
+      method: "DELETE",
+    };
+
+    await fetch(
+      `https://${DB_NAME}.firebaseio.com/${this.appPrefix}/${this.user.localId}/${id}.json?auth=${this.user.idToken}`,
+      requestOptions,
+    );
   }
 }
