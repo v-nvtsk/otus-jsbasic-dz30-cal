@@ -23,13 +23,11 @@ function saveAfterEdit(
 ): void {
   const taskTextEl: HTMLInputElement | null = newItem.querySelector(".item__input-text");
   const taskTextLabel = newItem.querySelector(".item__title");
-  if (taskTextEl !== null && taskTextLabel !== null) {
-    taskTextLabel.textContent = taskTextEl.value;
-    onEdit({ id, taskText: taskTextEl.value }).catch((e) => {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    });
-  }
+  taskTextLabel!.textContent = taskTextEl!.value;
+  onEdit({ id, taskText: taskTextEl!.value }).catch((e) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  });
 }
 
 export function renderTaskItem(options: {
