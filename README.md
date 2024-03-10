@@ -1,73 +1,56 @@
----
-created: 2024-01-16T23:36:51 (UTC +03:00)
-tags: []
-source: https://otus.ru/learning/233931/#/
-author:
----
+[![Lint and Test](https://github.com/v-nvtsk/otus-jsbasic-dz30-cal/actions/workflows/lint-test.yaml/badge.svg)](https://github.com/v-nvtsk/otus-jsbasic-dz30-cal/actions/workflows/lint-test.yaml) ![Endpoint Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/v-nvtsk/f9b687636482339cabd6a8c4b369f3eb/raw/ffb2ac96927666af874670e4f03f583c651e1e83/otus-jsbasic-dz30-cal-junit-tests.json) [![pages-build-deployment](https://github.com/v-nvtsk/otus-jsbasic-dz30-cal/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/v-nvtsk/otus-jsbasic-dz30-cal/actions/workflows/pages/pages-build-deployment)
 
-# Мои курсы — JavaScript Developer. Basic | OTUS
+# Разработка API для работы с календарем задач - CRUD, фильтрация и поиск
 
-> ## Excerpt
->
-> Профессиональные онлайн курсы для разработчиков
+## Цель работы:
 
----
+Разработать собственный API для библиотеки асинхронной работы с хранилищами данных.
 
-## Домашнее задание
+## Выполнено:
 
-Разработка API для работы с календарем задач - CRUD, фильтрация и поиск
+[Preview on GitHub Pages](https://v-nvtsk.github.io/otus-jsbasic-dz30-cal/)
 
-Цель:
+Класс Calendar может быть инициализирован с хранилищем localStorage или Firebase.
+Для этого реализовани единый интерфейс CRUD календаря и создан асинхронный интерфейс для работы с localStorage.
 
-В этом задании вы потренируете в разработке собственного API для своих библиотек
-
-Описание/Пошаговая инструкция выполнения домашнего задания:
-
-Необходимо
-
-- в репозитории прошлого задания создать новую ветку
-- описать интерфейс для библиотеки для работы с календарем (закладывая работу с произвольным хранилищем)  
-  Должны поддерживаться следующие операции
-- CRUD
-- фильтрация задач (по тексту, дате, статусу, тегам)
-- Реализовать преложенный интерфейс с использованием в качестве хранилища locasStorage
-- Покрыть реализацию тестами
-- ссылку на пуллреквест сбросить в чат по дз
-
-Критерии оценки:
-
-Критерии оценки:
-
-- описанный интерфейс поддерживает CRUD - 1 балл
-- и фильтрацию (по тегам/ статусу/тексту/дате) - 1 балл
-- все операции асинхронные - 1 балл
-- интерфейс имеет реализацию с localStorage - 2 балла
-- интерфейс имеет реализацию с сторонним хранилищем (Firebase/json db) - 2 балла
-- интерфейс покрыт тестами - 2 балла
-- реализация поддерживает namespace - 1 балл  
-  Принято от 8 баллов
+Календарь поддерживает операции создания, чтения, изменения и удаления задач.
+При чтении задач поддерживается фильтрация (по тексту, дате, статусу, тегам).
 
 ## Описание API
 
-Данные хранятся в виде структуры:
+API хранения данных:
 
-```
-interface TodoItem {
-  id?: string;
-  taskText: string;
-  status: boolean;
-  tags: string;
-  creationDateUTC: string;
-  dueDateUTC: string;
+```js
+interface CalendarAPI {
+  create: (data: TodoItem) => Promise<string | undefined>;
+  read: (filter: Partial<Filter>) => Promise<TodoItem[]>;
+  update: (data: UpdateTodoItem) => Promise<TodoItem | undefined>;
+  delete: (id: string) => Promise<void>;
 }
 ```
 
-Условия передачи данных на запись:
-id структуры формируется на стороне клиента.
-После записи возвращается новый id, который записываем в структуру в поле id.
-В хранилище записи хранятся с использованием namespace, которое состоит из APP_PREFIX и задаваемого при инициализации хранилища USER_PREFIX.
-Таким образом идентификатор записи в хранилище:
+Данные хранятся в виде структуры:
+
+```js
+interface TodoItem {
+id?: string;
+taskText: string;
+status: boolean;
+tags: string;
+creationDateUTC: string;
+dueDateUTC: string;
+}
 
 ```
-APP_PREFIX + "@" + USER_PREFIX + "#" + RECORD_ID
+
+API фильтрации данных:
+
+```js
+interface Filter {
+  dateFrom?: Date;
+  dateTo?: Date;
+  taskText?: string;
+  status?: boolean;
+  taskTags?: string;
+}
 ```
