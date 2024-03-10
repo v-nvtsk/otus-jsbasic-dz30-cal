@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { LocalStore } from "./local-store";
-import { APP_PREFIX, UpdateTodoItem, type TodoItem } from "./calendar-api";
+import { APP_PREFIX, USER_PREFIX, UpdateTodoItem, type TodoItem } from "./calendar-api";
 
 describe("LocalStore", () => {
   let localStore: LocalStore;
-  const USER_PREFIX = "test";
-  const namespace = `${APP_PREFIX}@${USER_PREFIX}#`;
+  const userPrefix = "test_user";
+  const namespace = `${APP_PREFIX}@${userPrefix}#`;
 
   beforeEach(() => {
-    localStore = new LocalStore(USER_PREFIX);
+    localStore = new LocalStore(userPrefix);
   });
 
   afterEach(() => {
@@ -228,6 +228,6 @@ describe("LocalStore", () => {
     const newId = await localStoreWithNoPrefix.create(testItem);
     testItem.id = newId;
     expect(localStorage.length).toBe(1);
-    expect(localStorage.key(0)?.startsWith("calendar@user#")).toBe(true);
+    expect(localStorage.key(0)?.startsWith(`${APP_PREFIX}@${USER_PREFIX}#`)).toBe(true);
   });
 });
