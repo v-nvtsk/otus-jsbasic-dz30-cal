@@ -5,9 +5,9 @@
  */
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Config } from "@jest/types";
+import { Config } from "jest";
 
-const config: Config.InitialOptions = {
+const config: Config = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -24,7 +24,7 @@ const config: Config.InitialOptions = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: ["./src/**/*.ts"],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
@@ -42,7 +42,7 @@ const config: Config.InitialOptions = {
     "json",
     "json-summary",
     "text",
-    // "lcov",
+    "lcov",
     //   "clover"
   ],
 
