@@ -46,14 +46,18 @@ export function renderFilterControls(
         <input class="filter__tags" name="filterTags" type="text" placeholder="Tags">
       </div>
 
-      <div class="filter__group">
+      <div class="filter__group filter__group-btn">
         <button type="submit" class="filter__btn-filter">Filter</button>
-        <button class="filter__btn-clear" ">Filter</button>
+        <input type="button" class="filter__btn-clear" value="Clear">
       </div>
     </fieldset>
   `;
 
   parent.append(filterControls);
+
+  filterControls.querySelector(".filter__btn-clear")!.addEventListener("click", () => {
+    filterControls.reset();
+  });
 
   filterControls.addEventListener("submit", (ev: Event) => {
     ev.preventDefault();

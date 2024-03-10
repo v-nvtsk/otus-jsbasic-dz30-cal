@@ -38,4 +38,4 @@ export interface CalendarAPI {
 }
 
 export const APP_PREFIX = "calendar";
-export const USER_PREFIX = "user";
+export const USER_PREFIX = "test@test.test";

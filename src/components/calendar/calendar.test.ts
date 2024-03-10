@@ -71,19 +71,31 @@ describe("Calendar", () => {
     await sleep();
     expect(lsCreate).toHaveBeenCalled();
 
-    const filterTagsInput = filterForm.querySelector(".filter__tags") as HTMLInputElement;
-
-    filterTagsInput.value = "tag1";
-    filterForm.submit();
-    await sleep();
-    expect(lsRead).toHaveBeenLastCalledWith({
-      taskTags: "tag1",
-    });
-
-    filterTagsInput.value = "";
     filterForm.submit();
     await sleep();
     expect(lsRead).toHaveBeenLastCalledWith({});
+
+    const filterDateFrom = filterForm.querySelector(".filter__date-from") as HTMLInputElement;
+    const filterDateTo = filterForm.querySelector(".filter__date-to") as HTMLInputElement;
+    const filterText = filterForm.querySelector(".filter__text") as HTMLInputElement;
+    const filterStatus = filterForm.querySelector(".filter__status") as HTMLInputElement;
+    const filterTags = filterForm.querySelector(".filter__tags") as HTMLInputElement;
+
+    filterDateFrom.value = "2023-01-01";
+    filterDateTo.value = "2023-01-01";
+    filterText.value = "Some test for test";
+    filterTags.value = "Missing tags";
+    filterStatus.value = "0";
+
+    filterForm.submit();
+    await sleep();
+    expect(lsRead).toHaveBeenLastCalledWith({
+      dateFrom: new Date(filterDateFrom.value),
+      dateTo: new Date(filterDateTo.value),
+      taskText: filterText.value,
+      taskTags: filterTags.value,
+      status: Boolean(Number(filterStatus.value)),
+    });
   });
 
   it("should handle onDelete", async () => {
