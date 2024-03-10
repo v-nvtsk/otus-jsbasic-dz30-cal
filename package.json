@@ -66,8 +66,7 @@
     "*.{css,scss}": [
       "npx stylelint --",
       "npx prettier --write"
-    ],
-    "*.md": "prettier --list-different"
+    ]
   },
   "lint-prepush": {
     "verbose": true,
