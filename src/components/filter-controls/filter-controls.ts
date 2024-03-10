@@ -57,6 +57,7 @@ export function renderFilterControls(
 
   filterControls.querySelector(".filter__btn-clear")!.addEventListener("click", () => {
     filterControls.reset();
+    filterControls.submit();
   });
 
   filterControls.addEventListener("submit", (ev: Event) => {
